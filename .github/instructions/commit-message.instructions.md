@@ -4,38 +4,52 @@ applyTo: "**"
 # Commit Message Generation Instructions
 
 ## Format
-All commit messages should follow this format:
+
+- Use conventional format: `type(scope): description`
+- Types: feat, fix, docs, style, refactor, test, chore
+- Optional scope in parentheses (entity, dto, controller, etc.)
+- Concise description in imperative mood, no period at end
+- You must keep the names if they are technical themes or programming code
 
 ## Content
-- Write all commit messages in Spanish
-- Use imperative, present tense (e.g., "añade" not "añadido" or "añadiendo")
-- First line should be 50 characters or less
-- Descriptions should be clear and descriptive
-- Reference issues and pull requests when relevant using #<issue-number>
+
+- First line should not exceed 72 characters
+- Describe WHAT changed and WHY, not HOW
+- Use Spanish for the description
+- Maintain consistency with previous commits
 
 ## Type Definitions
-- **feat**: A new feature
-- **fix**: A bug fix
-- **docs**: Documentation only changes
-- **style**: Changes that do not affect the meaning of the code (formatting, etc)
-- **refactor**: A code change that neither fixes a bug nor adds a feature
-- **perf**: A code change that improves performance
-- **test**: Adding missing or correcting existing tests
-- **chore**: Changes to the build process or auxiliary tools
+
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white-space, formatting, etc.)
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to the build process or auxiliary tools
 
 ## Common Scopes
-- **api**: Changes to the API controllers or endpoints
-- **model**: Changes to data models
-- **config**: Configuration changes
-- **auth**: Authentication related changes
-- **ui**: User interface changes
-- **db**: Database related changes
-- **weather**: Weather forecast functionality
+
+- `api`: Changes related to API endpoints or controllers
+- `auth`: Authentication and authorization features
+- `entity`: Entity model changes
+- `dto`: Data Transfer Object modifications
+- `db`: Database related changes (migrations, context, etc.)
+- `config`: Configuration and setup changes
+- `ui`: User interface components (if applicable)
+- `service`: Service layer implementations
+- `repo`: Repository layer implementations
+- `test`: Test infrastructure (separate from the 'test' type)
+- `docs`: Documentation specific scopes
+- `deps`: Dependency management
 
 ## Examples
-- `feat(api): añade endpoint para búsqueda por fecha`
-- `fix(weather): corrige cálculo de temperatura en Fahrenheit`
-- `docs(readme): actualiza instrucciones de instalación`
-- `refactor(model): simplifica modelo de pronóstico del tiempo`
-- `test(api): añade pruebas para el controlador WeatherForecast`
-- `chore(deps): actualiza paquetes NuGet`
+
+- `feat(auth): implementar autenticaciÃ³n basada en JWT`
+- `fix(entity): corregir relaciÃ³n entre Product y Category`
+- `docs(api): aÃ±adir documentaciÃ³n para endpoints de productos`
+- `refactor(service): mejorar el rendimiento del servicio de catÃ¡logo`
+- `chore(deps): actualizar paquetes Microsoft.EntityFrameworkCore`
+- `test(api): aÃ±adir pruebas para ProductController`
+- `feat(db): aÃ±adir migraciones para nuevas entidades de pedidos`
+- `style(dto): aplicar convenciones de nomenclatura a DTOs`

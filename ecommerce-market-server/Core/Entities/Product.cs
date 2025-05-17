@@ -7,7 +7,7 @@
     /// Esta clase contiene la información principal de un producto, incluyendo su nombre, descripción,
     /// stock disponible, precio, imagen y las relaciones con su marca y categoría.
     /// </remarks>
-    public class Product
+    public class Product : BaseClass
     {
         public string? Name { get; set; }
         public string? Description { get; set; }

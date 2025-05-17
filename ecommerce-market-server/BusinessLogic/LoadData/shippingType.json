@@ -1,0 +1,22 @@
+[
+	{
+		"Name": "QuickShipping",
+		"Description": 	"El envío mas rápido",
+		"Price": 15
+	},
+	{
+		"Name": "RegularShipping",
+		"Description": "Servicio de envío regular en 5 días",
+		"Price": 10
+	},
+	{
+		"Name": "CheapShipping",
+		"Description": "Servicio de envío barato",
+		"Price": 5
+	},
+	{
+		"Name": "FreeShipping",
+		"Description": "Servicio de envío gratis",
+		"Price": 0
+	}
+]

@@ -11,17 +11,7 @@ namespace Core.Interfaces
     /// </remarks>
     public interface IProductRepository
     {
-        /// <summary>
-        /// Obtiene de forma asíncrona un producto por su identificador único.
-        /// </summary>
-        /// <param name="id">Identificador único del producto.</param>
-        /// <returns>Una tarea que representa la operación asíncrona y contiene el producto correspondiente si existe.</returns>
         Task<Product> GetProductByIdAsync(int id);
-
-        /// <summary>
-        /// Obtiene de forma asíncrona la lista completa de productos disponibles.
-        /// </summary>
-        /// <returns>Una tarea que representa la operación asíncrona y contiene una lista de productos.</returns>
         Task<IReadOnlyList<Product>> GetProductsAsync();
     }
 }

@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Core.Specifications
+namespace Core.Interfaces
 {
     /// <summary>
     /// Define el contrato para especificaciones que encapsulan criterios de consulta, inclusión de entidades relacionadas y opciones de paginación y ordenamiento.

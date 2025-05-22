@@ -14,11 +14,11 @@ namespace Core.Interfaces
     /// </remarks>
     public interface IGenericRepository<T> where T : BaseClass
     {
-        Task<T> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(int id);
 
         Task<IReadOnlyList<T>> GetAllAsync();
 
-        Task<T> GetByIdWithSpec(ISpecification<T> spec);
+        Task<T?> GetByIdWithSpec(ISpecification<T> spec);
 
         Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec);
 

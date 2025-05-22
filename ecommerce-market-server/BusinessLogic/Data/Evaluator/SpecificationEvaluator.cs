@@ -5,16 +5,25 @@ using Microsoft.EntityFrameworkCore;
 namespace BusinessLogic.Data.Evaluator
 {
     /// <summary>
-    /// Evaluador de especificaciones para entidades que heredan de <see cref="BaseClass"/>.
+    /// Clase que evalúa una especificación y aplica sus criterios a una consulta de tipo <see cref="IQueryable{T}"/>.
     /// </summary>
-    /// <typeparam name="T">Tipo de entidad que hereda de <see cref="BaseClass"/>.</typeparam>
+    /// <typeparam name="T">El tipo de entidad que se está evaluando, que debe heredar de <see cref="BaseClass"/>.</typeparam>
     /// <remarks>
-    /// Esta clase implementa <see cref="ISpecificationEvaluator{TEntity}"/> para definir la lógica de evaluación de especificaciones.
+    /// Esta clase es responsable de aplicar los criterios de una especificación a una consulta de tipo <see cref="IQueryable{T}"/>.
     /// </remarks>
     public class SpecificationEvaluator<T> where T : BaseClass
     {
+        /// <summary>
+        /// Aplica los criterios de una especificación a una consulta de tipo <see cref="IQueryable{T}"/>.
+        /// </summary>
+        /// <param name="inputQuery">La consulta de entrada sobre la que se aplicarán los filtros y modificaciones.</param>
+        /// <param name="spec">La especificación que define los criterios, ordenamientos, inclusiones y paginación.</param>
+        /// <returns>
+        /// Una nueva consulta <see cref="IQueryable{T}"/> que incorpora los filtros, ordenamientos, inclusiones y paginación definidos en la especificación.
+        /// </returns>
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> spec)
         {
+
             if (spec.Criteria != null)
             {
                 inputQuery = inputQuery.Where(spec.Criteria);

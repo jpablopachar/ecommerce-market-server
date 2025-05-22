@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Dtos;
@@ -113,6 +115,93 @@ namespace WebApi.Controllers
                 Admin = false,
                 Token = _tokenService.CreateToken(user, null)
             };
+        }
+
+        /// <summary>
+        /// Obtiene la información del usuario autenticado.
+        /// </summary>
+        /// <returns>
+        /// Un objeto <see cref="UserDto"/> con la información del usuario autenticado,
+        /// o una respuesta de error si la autenticación falla.
+        /// </returns>
+        /// <exception cref="UnauthorizedResult">
+        /// Se retorna cuando el usuario no está autenticado.
+        /// </exception>
+        [Authorize]
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<UserDto>> Update(string id, RegisterDto registerDto)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El usuario no existe."));
+            }
+
+            user.Name = registerDto.Name;
+            user.LastName = registerDto.LastName;
+            user.Image = registerDto.Image;
+
+            if (!string.IsNullOrEmpty(registerDto.Password))
+            {
+                user.PasswordHash = _passwordHasher.HashPassword(user, registerDto.Password);
+            }
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(new CodeErrorResponse(400, "Error al actualizar la contraseña."));
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                Username = user.UserName,
+                Token = _tokenService.CreateToken(user, roles),
+                Image = user.Image,
+                Admin = roles.Contains("Admin"),
+            };
+        }
+
+        /// <summary>
+        /// Obtiene la información de un usuario específico por su ID.
+        /// </summary>
+        /// <param name="id">ID del usuario a buscar.</param>
+        /// <returns>
+        /// Un objeto <see cref="UserDto"/> con la información del usuario encontrado,
+        /// o una respuesta de error si el usuario no existe.
+        /// </returns>
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("pagination")]
+        public async Task<ActionResult<Pagination<UserDto>>> GetUsers([FromQuery] UserSpecificationParams userParams)
+        {
+            var spec = new UserSpecification(userParams);
+
+            var users = await _securityRepository.GetAllWithSpec(spec);
+
+            var specCount = new UserForCountingSpecification(userParams);
+
+            var totalUsers = await _securityRepository.CountAsync(specCount);
+
+            var rounded = Math.Ceiling((double)totalUsers / userParams.PageSize);
+            var totalPages = Convert.ToInt32(rounded);
+
+            var data = _mapper.Map<IReadOnlyList<User>, IReadOnlyList<UserDto>>(users);
+
+            return Ok(new Pagination<UserDto>
+            {
+                Count = totalUsers,
+                Data = data,
+                PageCount = totalPages,
+                PageIndex = userParams.PageIndex,
+                PageSize = userParams.PageSize,
+            });
         }
     }
 }

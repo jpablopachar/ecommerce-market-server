@@ -11,6 +11,6 @@ namespace Core.Interfaces
     /// </remarks>
     public interface ITokenService
     {
-        string CreateToken(User user, IList<string> roles);
+        string CreateToken(User user, IList<string>? roles);
     }
 }

@@ -1,5 +1,6 @@
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Data.Evaluator
@@ -7,11 +8,13 @@ namespace BusinessLogic.Data.Evaluator
     /// <summary>
     /// Clase que evalúa una especificación y aplica sus criterios a una consulta de tipo <see cref="IQueryable{T}"/>.
     /// </summary>
-    /// <typeparam name="T">El tipo de entidad que se está evaluando, que debe heredar de <see cref="BaseClass"/>.</typeparam>
+    /// <typeparam name="T">
+    /// Tipo de entidad que implementa <see cref="IdentityUser"/> y que se utilizará en la evaluación de la especificación.
+    /// </typeparam>
     /// <remarks>
     /// Esta clase es responsable de aplicar los criterios de una especificación a una consulta de tipo <see cref="IQueryable{T}"/>.
     /// </remarks>
-    public class SecuritySpecificationEvaluator<T> where T : BaseClass
+    public class SecuritySpecificationEvaluator<T> where T : IdentityUser
     {
         /// <summary>
         /// Aplica los criterios de filtrado, ordenación, paginación e inclusión de entidades relacionadas definidos en una especificación a una consulta de tipo <see cref="IQueryable{T}"/>.

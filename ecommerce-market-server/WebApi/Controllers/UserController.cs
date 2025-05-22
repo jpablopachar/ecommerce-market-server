@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -11,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Dtos;
 using WebApi.Errors;
+using WebApi.Extensions;
 
 namespace WebApi.Controllers
 {
@@ -202,6 +199,194 @@ namespace WebApi.Controllers
                 PageIndex = userParams.PageIndex,
                 PageSize = userParams.PageSize,
             });
+        }
+
+        /// <summary>
+        /// Obtiene la información de un usuario específico por su ID.
+        /// </summary>
+        /// <param name="id">ID del usuario a buscar.</param>
+        /// <returns>
+        /// Un objeto <see cref="UserDto"/> con la información del usuario encontrado,
+        /// o una respuesta de error si el usuario no existe.
+        /// </returns>
+        [Authorize(Roles = "ADMIN")]
+        [HttpPut("role/{id}")]
+        public async Task<ActionResult<UserDto>> UpdateRole(string id, RoleDto roleParam)
+        {
+            var role = await _roleManager.FindByNameAsync(roleParam.Name!);
+
+            if (role == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El rol no existe."));
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El usuario no existe."));
+            }
+
+            var userDto = _mapper.Map<User, UserDto>(user);
+
+            if (roleParam.Status)
+            {
+                var result = await _userManager.AddToRoleAsync(user, roleParam.Name!);
+
+                if (result.Succeeded)
+                {
+                    userDto.Admin = true;
+                }
+
+                if (result.Errors.Any())
+                {
+                    if (result.Errors.Where(x => x.Code == "UserAlreadyInRole").Any())
+                    {
+                        userDto.Admin = true;
+                    }
+                }
+            }
+            else
+            {
+                var result = await _userManager.RemoveFromRoleAsync(user, roleParam.Name!);
+
+                if (result.Succeeded)
+                {
+                    userDto.Admin = false;
+                }
+            }
+
+            if (userDto.Admin)
+            {
+                var roles = new List<string>();
+
+                roles.Add("ADMIN");
+
+                userDto.Token = _tokenService.CreateToken(user, roles);
+            }
+            else
+            {
+                userDto.Token = _tokenService.CreateToken(user, null);
+            }
+
+            return userDto;
+        }
+
+        /// <summary>
+        /// Obtiene la información de un usuario específico por su ID.
+        /// </summary>
+        /// <param name="id">ID del usuario a buscar.</param>
+        /// <returns>
+        /// Un objeto <see cref="UserDto"/> con la información del usuario encontrado,
+        /// o una respuesta de error si el usuario no existe.
+        /// </returns>
+        [Authorize(Roles = "ADMIN")]
+        [HttpGet("account/{id}")]
+        public async Task<ActionResult<UserDto>> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El usuario no existe."));
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new UserDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                Username = user.UserName,
+                Image = user.Image,
+                Admin = roles.Contains("Admin"),
+            };
+        }
+
+        /// <summary>
+        /// Obtiene la información del usuario autenticado.
+        /// </summary>
+        /// <returns>
+        /// Un objeto <see cref="UserDto"/> con la información del usuario autenticado,
+        /// o una respuesta de error si la autenticación falla.
+        /// </returns>
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetUser()
+        {
+            var user = await _userManager.SearchUserAsync(HttpContext.User);
+
+            var roles = await _userManager.GetRolesAsync(user!);
+
+            return new UserDto
+            {
+                Id = user!.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                Username = user.UserName,
+                Image = user.Image,
+                Admin = roles.Contains("Admin"),
+                Token = _tokenService.CreateToken(user, roles),
+            };
+        }
+
+        /// <summary>
+        /// Valida si un correo electrónico ya está registrado en el sistema.
+        /// </summary>
+        /// <param name="email">El correo electrónico a validar.</param>
+        /// <returns>
+        /// Un valor booleano que indica si el correo electrónico ya está registrado.
+        /// </returns>
+        [HttpGet("validEmail")]
+        public async Task<ActionResult<bool>> ValidateEmail([FromQuery] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Obtiene la dirección del usuario autenticado.
+        /// </summary>
+        /// <returns>
+        /// Un objeto <see cref="AddressDto"/> con la información de la dirección del usuario,
+        /// o una respuesta de error si el usuario no tiene una dirección asociada.
+        /// </returns>
+        [Authorize]
+        [HttpGet("address")]
+        public async Task<ActionResult<AddressDto>> GetAddress()
+        {
+            var user = await _userManager.SearchUserWithAddressAsync(HttpContext.User);
+
+            return _mapper.Map<Address, AddressDto>(user?.Address!);
+        }
+
+        /// <summary>
+        /// Actualiza la dirección del usuario autenticado.
+        /// </summary>
+        /// <param name="address">La nueva dirección del usuario.</param>
+        /// <returns>
+        /// Un objeto <see cref="AddressDto"/> con la información de la dirección actualizada,
+        /// o una respuesta de error si la actualización falla.
+        /// </returns>
+        [Authorize]
+        [HttpPut("address")]
+        public async Task<ActionResult<AddressDto>> UpdateAddress(AddressDto address)
+        {
+            var user = await _userManager.SearchUserWithAddressAsync(HttpContext.User);
+
+            user!.Address = _mapper.Map<AddressDto, Address>(address);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded) return Ok(_mapper.Map<Address, AddressDto>(user.Address));
+
+            return BadRequest("No se pudo actualizar la dirección del usuario");
         }
     }
 }

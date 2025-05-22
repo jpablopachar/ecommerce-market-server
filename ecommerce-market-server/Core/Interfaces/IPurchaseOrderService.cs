@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Core.Entities.PurchaseOrder;
 
 namespace Core.Interfaces
@@ -13,13 +9,13 @@ namespace Core.Interfaces
     /// Esta interfaz establece las operaciones principales para crear y consultar órdenes de compra,
     /// así como para obtener los tipos de envío disponibles.
     /// </remarks>
-    public interface IPurchaseOrder
+    public interface IPurchaseOrderService
     {
-        Task<PurchaseOrder> AddPurchaseOrderAsync(string buyerEmail, int shippingType, string cartId, Address address);
+        Task<PurchaseOrder?> AddPurchaseOrderAsync(string buyerEmail, int shippingType, string cartId, Address address);
 
         Task<IReadOnlyList<PurchaseOrder>> GetPurchaseOrdersByEmailAsync(string email);
 
-        Task<PurchaseOrder> GetPurchaseOrderByIdAsync(int id);
+        Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(int id, string email);
 
         Task<IReadOnlyList<ShippingType>> GetShippingType();
     }

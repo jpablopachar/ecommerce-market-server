@@ -65,18 +65,18 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     // Configuración de DbContext
     services.AddDbContext<MarketDbContext>(opt =>
     {
-        opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        opt.UseSqlServer(configuration.GetConnectionString("SQLServerConnection"));
     });
 
     services.AddDbContext<SecurityDbContext>(x =>
     {
-        x.UseSqlServer(configuration.GetConnectionString("IdentitySeguridad"));
+        x.UseSqlServer(configuration.GetConnectionString("AuthConnection"));
     });
 
     // Configuración de Redis
     services.AddSingleton<IConnectionMultiplexer>(c =>
     {
-        var redisConfiguration = ConfigurationOptions.Parse(configuration.GetConnectionString("Redis")!, true);
+        var redisConfiguration = ConfigurationOptions.Parse(configuration.GetConnectionString("RedisConnection")!, true);
         return ConnectionMultiplexer.Connect(redisConfiguration);
     });
 

@@ -5,11 +5,9 @@ using BusinessLogic.Logic.Repository;
 using BusinessLogic.Logic.Service;
 using Core.Entities;
 using Core.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using WebApi.Middlewares;
@@ -83,7 +81,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     });
 
     // Servicios del sistema
-    services.TryAddSingleton<ISystemClock, SystemClock>();
+    services.AddSingleton<TimeProvider>(TimeProvider.System);
 
     // Repositorios específicos
     services.AddTransient<IProductRepository, ProductRepository>();

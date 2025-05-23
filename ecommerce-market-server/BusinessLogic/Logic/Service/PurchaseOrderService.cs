@@ -23,7 +23,7 @@ namespace BusinessLogic.Logic.Service
             var buyCart = await _buyCartRepository.GetBuyCartByIdAsync(cartId);
             var items = new List<ItemOrder>();
 
-            foreach (var item in buyCart.Items!)
+            foreach (var item in buyCart?.Items!)
             {
                 var productItem = await _unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
 

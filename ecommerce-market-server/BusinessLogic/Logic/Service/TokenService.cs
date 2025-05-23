@@ -25,7 +25,7 @@ namespace BusinessLogic.Logic.Service
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]!));
         }
 
-        public string CreateToken(User user, IList<string> roles)
+        public string CreateToken(User user, IList<string>? roles)
         {
             var claims = new List<Claim>
             {

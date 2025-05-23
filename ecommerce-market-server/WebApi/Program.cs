@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using WebApi.Middlewares;
 using WebApi.Profiles;
@@ -100,6 +101,11 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
                 .WithOrigins("*");
         });
     });
+
+    // Configuración de Swagger
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+
 }
 
 static void ConfigurePipeline(WebApplication app)
@@ -122,6 +128,13 @@ static void ConfigurePipeline(WebApplication app)
 
     // Mapeo de controladores
     app.MapControllers();
+
+    // Configurar Swagger solo en desarrollo
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 }
 
 static async Task SeedDatabase(WebApplication app)

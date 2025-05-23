@@ -532,4 +532,6 @@ obj/
 /node_modules
 /wwwroot/node_modules
 
+appsettings.json
+
 # End of https://www.toptal.com/developers/gitignore/api/csharp,aspnetcore,dotnetcore

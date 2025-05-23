@@ -61,7 +61,7 @@ namespace BusinessLogic.Data
             }
             catch (Exception ex)
             {
-                var logger = loggerFactory.CreateLogger<SecurityDbContextData>();
+                var logger = loggerFactory!.CreateLogger<SecurityDbContextData>();
                 logger.LogError(ex, "Error al cargar los datos de usuario.");
             }
         }

@@ -11,9 +11,9 @@ namespace Core.Interfaces
     /// </remarks>
     public interface IBuyCartRepository
     {
-        Task<BuyCart> GetBuyCartByIdAsync(string cartId);
+        Task<BuyCart?> GetBuyCartByIdAsync(string cartId);
 
-        Task<BuyCart> UpdateBuyCartAsync(BuyCart buyCart);
+        Task<BuyCart?> UpdateBuyCartAsync(BuyCart buyCart);
 
         Task<bool> DeleteBuyCartAsync(string cartId);
     }
